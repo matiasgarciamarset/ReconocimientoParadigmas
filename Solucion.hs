@@ -1,6 +1,7 @@
 module Solucion where
 
 import Data.List
+import Test.HUnit
 
 type Texto = String
 type Feature = Float
@@ -19,12 +20,45 @@ tryClassifier x y = let xs = extraerFeatures ([longitudPromedioPalabras, repetic
 mean :: [Float] -> Float
 mean xs = realToFrac (sum xs) / genericLength xs
 
+--Tests ej1
+test_ej1_1 = TestCase (assertEqual "split ',' \"hola PLP, bienvenidos!\"" (["hola PLP"," bienvenidos!"]) (split ',' "hola PLP, bienvenidos!"))
+test_ej1_2 = TestCase (assertEqual "split ' ' \" hola PLP, bienvenidos!\"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' " hola PLP, bienvenidos!"))
+test_ej1_3 = TestCase (assertEqual "split ' ' \"hola PLP, bienvenidos! \"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' "hola PLP, bienvenidos! "))
+test_ej1_4 = TestCase (assertEqual "split ' ' \"  hola PLP, bienvenidos!  \"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' "  hola PLP, bienvenidos!  "))
+test_ej1_5 = TestCase (assertEqual "split ' ' \"hola  PLP,   bienvenidos!\"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' "hola  PLP,   bienvenidos!"))
+
+tests_ej1 = TestList [TestLabel "test_ej1_1" test_ej1_1,TestLabel "test_ej1_2" test_ej1_2,TestLabel "test_ej1_3" test_ej1_3,TestLabel "test_ej1_4" test_ej1_4,
+                      TestLabel "test_ej1_5" test_ej1_5]
+
 split :: Eq a => a -> [a] -> [[a]]
-split a = foldr (\x (z:zs) -> if (x==a) then []:z:zs else (x:z):zs) [[]]
+split a = filter (not.null) . (foldr (\x (z:zs) -> if (x==a) then
+                                                     if(null z) then
+                                                       z:zs
+                                                     else
+                                                       []:(z:zs)
+                                                    else
+                                                     (x:z):zs
+                                      ) [[]]
+                               )
+
+--Tests ej2
+test_ej2_1 = TestCase (assertEqual "longitudPromedioPalabras \"Este test tiene palabras $$++$$\"" (5.4)
+                                   (longitudPromedioPalabras "Este test tiene palabras $$++$$"))
+test_ej2_2 = TestCase (assertEqual "longitudPromedioPalabras \"  12345    12  \"" (3.5)
+                                   (longitudPromedioPalabras "  12345    12  "))
+test_ej2_3 = TestCase (assertEqual "longitudPromedioPalabras \"Este\"" (4)
+                                   (longitudPromedioPalabras "Este"))
+--TODO ¿Que hacer cuando pido longitudPromedioPalabras de una cadena vacia?
+test_ej2_4 = TestCase (assertEqual "longitudPromedioPalabras \"\"" (0)
+                                   (longitudPromedioPalabras ""))
+
+tests_ej2 = TestList [TestLabel "test_ej2_1" test_ej2_1,TestLabel "test_ej2_2" test_ej2_2,TestLabel "test_ej2_3" test_ej2_3,TestLabel "test_ej2_4" test_ej2_4]
 
 longitudPromedioPalabras :: Extractor
-longitudPromedioPalabras xs = sumaLongitudes(split ' ' xs) / (genericLength (split ' ' xs))
-sumaLongitudes = foldr (\x sumador -> genericLength x + sumador) 0
+longitudPromedioPalabras xs = mean $ map genericLength palabras
+                               where palabras = split ' ' xs
+--longitudPromedioPalabras xs = sumaLongitudes(split ' ' xs) / (genericLength (split ' ' xs))
+--sumaLongitudes = foldr (\x sumador -> genericLength x + sumador) 0
 
 cuentas :: Eq a => [a] -> [(Int, a)]
 cuentas xs = cantidadDeApariciones (elementosSinRepetir xs) xs
