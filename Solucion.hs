@@ -60,17 +60,69 @@ longitudPromedioPalabras xs = mean $ map genericLength palabras
 --longitudPromedioPalabras xs = sumaLongitudes(split ' ' xs) / (genericLength (split ' ' xs))
 --sumaLongitudes = foldr (\x sumador -> genericLength x + sumador) 0
 
-cuentas :: Eq a => [a] -> [(Int, a)]
-cuentas xs = cantidadDeApariciones (elementosSinRepetir xs) xs
+--Tests ej3
+test_ej3_1 = TestCase (assertEqual "cuentas [\"x\", \"x\", \"y\", \"x\", \"z\"]" [(3,"x"),(1,"y"),(1,"z")]
+                                   (cuentas ["x", "x", "y", "x", "z"]))
+test_ej3_2 = TestCase (assertEqual "cuentas []" ([]::[(Int, String)])
+                                   (cuentas []))
+test_ej3_3 = TestCase (assertEqual "cuentas [\"x\"]" [(1,"x")]
+                                   (cuentas ["x"]))
+test_ej3_4 = TestCase (assertEqual "cuentas [\"x\", \"x\", \"yy\", \"y\", \"z\", \"x\"]" [(3,"x"), (1,"yy"),(1,"y"),(1,"z")]
+                                   (cuentas ["x", "x", "yy", "y", "z", "x"]))
 
+tests_ej3 = TestList [TestLabel "test_ej3_1" test_ej3_1,TestLabel "test_ej3_2" test_ej3_2,TestLabel "test_ej3_3" test_ej3_3,TestLabel "test_ej3_4" test_ej3_4]
+
+
+cuentas :: Eq a => [a] -> [(Int, a)]
+--cuentas xs = cantidadDeApariciones (elementosSinRepetir xs) xs
+cuentas xs = let sinRepetidos = reverse $ elementosSinRepetir $ reverse xs in
+               map (\x -> ((repeticiones x xs), x)) sinRepetidos
+
+               
+--TODO
+--Preguntar que tiene que hacer el ejercicio 4
+--Tests ej4
+test_ej4_1 = TestCase (assertEqual "repeticionesPromedio \"lalala $$++$$ lalala lalala $$++$$\"]" (2.5)
+                                   (repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$"))
+test_ej4_2 = TestCase (assertEqual "cuentas [\"x\",\"x\"]" ([]::[(Int, [Char])])
+                                   (cuentas []))
+test_ej4_3 = TestCase (assertEqual "cuentas [\"x\"]" [(1,"x")]
+                                   (cuentas ["x"]))
+test_ej4_4 = TestCase (assertEqual "cuentas [\"x\", \"x\", \"yy\", \"y\", \"z\", \"x\"]" [(3,"x"), (1,"yy"),(1,"y"),(1,"z")]
+                                   (cuentas ["x", "x", "yy", "y", "z", "x"]))
+
+tests_ej4 = TestList [TestLabel "test_ej4_1" test_ej4_1,TestLabel "test_ej4_2" test_ej4_2,TestLabel "test_ej4_3" test_ej4_3,TestLabel "test_ej4_4" test_ej4_4]
+               
 repeticionesPromedio :: Extractor
-repeticionesPromedio xs = (fromIntegral $ length $ split ' ' xs) / (fromIntegral $ length $ elementosSinRepetir $ split ' ' xs)
+--repeticionesPromedio xs = (fromIntegral $ length $ split ' ' xs) / (fromIntegral $ length $ elementosSinRepetir $ split ' ' xs)
+repeticionesPromedio xs = let palabras = split ' ' xs in
+                            (fromIntegral $ length palabras) / (fromIntegral $ length $ elementosSinRepetir palabras)
 
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
 
+--Tests ej5
+test_ej5_1 = TestCase (assertEqual "(head frecuenciaTokens) \"use_snake_case !\"" (0.125)
+                                   ((head frecuenciaTokens) "use_snake_case !"))
+--TODO
+--Que hacer si la cadena que le pasan es vacia ("")
+test_ej5_2 = TestCase (assertEqual "(head frecuenciaTokens) \"\"" (0)
+                                   ((head frecuenciaTokens) ""))
+test_ej5_3 = TestCase (assertEqual "(head $ tail frecuenciaTokens) \",a,\"" (0.66666666)
+                                   ((head $ tail frecuenciaTokens) ",a,"))
+test_ej5_4 = TestCase (assertEqual "(head frecuenciaTokens) \"abc\"" (0)
+                                   ((head frecuenciaTokens) "abc"))
+
+tests_ej5 = TestList [TestLabel "test_ej5_1" test_ej5_1,TestLabel "test_ej5_2" test_ej5_2,TestLabel "test_ej5_3" test_ej5_3,TestLabel "test_ej5_4" test_ej5_4]
+
 frecuenciaTokens :: [Extractor]
-frecuenciaTokens = map (\t -> (\x -> (fromIntegral (apariciones t x))/(fromIntegral (length x)) )) tokens
+frecuenciaTokens = map (\t -> (\x ->let longitud = length x in
+                                     if longitud == 0 then
+                                       0
+                                     else
+                                       ((fromIntegral $ repeticiones t x)/(fromIntegral $ longitud))
+                               )
+                       ) tokens
 
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
 normalizarExtractor textos extractor = (/maximoValor textos extractor).extractor
@@ -115,17 +167,22 @@ nFoldCrossValidation n datos etiquetas = (sum accuracies) / (fromIntegral n)
 
 -- *************** Funciones auxiliares ********************
 
-cantidadDeApariciones::Eq a => [a]->([a]->[(Int,a)])
-cantidadDeApariciones = foldr (\x contar -> (\ys->((repeticiones x ys),x):contar ys)) (\ys->[])
+--cantidadDeApariciones::Eq a => [a]->([a]->[(Int,a)])
+--cantidadDeApariciones = foldr (\x contar -> (\ys->((repeticiones x ys),x):contar ys)) (\ys->[])
 
 repeticiones::Eq a =>a->[a]->Int
-repeticiones x = foldr (\y contar -> if x==y then (1+) contar else contar) 0
+repeticiones x = foldr (\y contar -> if x==y then 1 + contar else contar) 0
 
+--elementosSinRepetir :: Eq a => [a] -> [a]
+--elementosSinRepetir xs = (foldr(\x recu->(\ys -> if repeticiones x (tail ys) == 0 then x:recu (tail ys) else recu (tail ys))) (\ys->[]) xs) xs
 elementosSinRepetir :: Eq a => [a] -> [a]
-elementosSinRepetir xs = (foldr(\x recu->(\ys -> if repeticiones x (tail ys) == 0 then x:recu (tail ys) else recu (tail ys))) (\ys->[]) xs) xs
+elementosSinRepetir = foldr (\x recu -> if x `elem` recu then recu else x:recu) []
 
-apariciones :: Eq a => a -> [a] -> Int
-apariciones a = foldr (\x xs -> if x==a then (1+xs) else xs) 0
+--esta :: Eq a => a -> [a] -> Bool
+--esta x xs = foldr (\y  recu -> y == x || recu) False xs
+
+--apariciones :: Eq a => a -> [a] -> Int
+--apariciones a = foldr (\x xs -> if x==a then (1+xs) else xs) 0
 
 maximoValor :: [Texto] -> Extractor -> Feature
 maximoValor textos extractor = abs $ maximoAbsoluto $ ejecutarExtractor textos extractor
