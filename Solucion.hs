@@ -26,10 +26,18 @@ test_ej1_2 = TestCase (assertEqual "split ' ' \" hola PLP, bienvenidos!\"" (["ho
 test_ej1_3 = TestCase (assertEqual "split ' ' \"hola PLP, bienvenidos! \"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' "hola PLP, bienvenidos! "))
 test_ej1_4 = TestCase (assertEqual "split ' ' \"  hola PLP, bienvenidos!  \"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' "  hola PLP, bienvenidos!  "))
 test_ej1_5 = TestCase (assertEqual "split ' ' \"hola  PLP,   bienvenidos!\"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' "hola  PLP,   bienvenidos!"))
+test_ej1_6 = TestCase (assertEqual "split ' ' \"   hola  PLP,   bienvenidos!    \"" (["hola", "PLP,", "bienvenidos!"]) (split ' ' "   hola  PLP,   bienvenidos!    "))
+test_ej1_7 = TestCase (assertEqual "split ' ' \"   \"" ([]) (split ' ' "   "))
+test_ej1_8 = TestCase (assertEqual "split ' ' \"\"" ([]) (split ' ' ""))
+test_ej1_9 = TestCase (assertEqual "split 'a' \"   \"" (["   "]) (split 'a' "   "))
+test_ej1_10 = TestCase (assertEqual "split 'a' \"\"" ([]) (split 'a' ""))
 
 tests_ej1 = TestList [TestLabel "test_ej1_1" test_ej1_1,TestLabel "test_ej1_2" test_ej1_2,TestLabel "test_ej1_3" test_ej1_3,TestLabel "test_ej1_4" test_ej1_4,
-                      TestLabel "test_ej1_5" test_ej1_5]
+                      TestLabel "test_ej1_5" test_ej1_5,TestLabel "test_ej1_6" test_ej1_6,TestLabel "test_ej1_7" test_ej1_7,TestLabel "test_ej1_8" test_ej1_8,
+                      TestLabel "test_ej1_9" test_ej1_9,TestLabel "test_ej1_10" test_ej1_10]
 
+--TODO
+--El separador es siempre un char o puede ser otra cosa?
 split :: Eq a => a -> [a] -> [[a]]
 split a = filter (not.null) . (foldr (\x (z:zs) -> if (x==a) then
                                                      if(null z) then
@@ -84,15 +92,22 @@ cuentas xs = let sinRepetidos = reverse $ elementosSinRepetir $ reverse xs in
 --Tests ej4
 test_ej4_1 = TestCase (assertEqual "repeticionesPromedio \"lalala $$++$$ lalala lalala $$++$$\"]" (2.5)
                                    (repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$"))
-test_ej4_2 = TestCase (assertEqual "cuentas [\"x\",\"x\"]" ([]::[(Int, [Char])])
-                                   (cuentas []))
-test_ej4_3 = TestCase (assertEqual "cuentas [\"x\"]" [(1,"x")]
-                                   (cuentas ["x"]))
-test_ej4_4 = TestCase (assertEqual "cuentas [\"x\", \"x\", \"yy\", \"y\", \"z\", \"x\"]" [(3,"x"), (1,"yy"),(1,"y"),(1,"z")]
-                                   (cuentas ["x", "x", "yy", "y", "z", "x"]))
+test_ej4_2 = TestCase (assertEqual "repeticionesPromedio \"  aa   x y aa \"]" (1.3333333333)
+                                   (repeticionesPromedio "  aa   x y aa "))
+test_ej4_3 = TestCase (assertEqual "repeticionesPromedio \"aa aa\"]" (2)
+                                   (repeticionesPromedio "aa aa"))
+test_ej4_4 = TestCase (assertEqual "repeticionesPromedio \"aaa\"]" (1)
+                                   (repeticionesPromedio "aaa"))
+test_ej4_5 = TestCase (assertEqual "repeticionesPromedio \"   \"]" (0)
+                                   (repeticionesPromedio "   "))
+test_ej4_6 = TestCase (assertEqual "repeticionesPromedio \"\"]" (0)
+                                   (repeticionesPromedio ""))
 
-tests_ej4 = TestList [TestLabel "test_ej4_1" test_ej4_1,TestLabel "test_ej4_2" test_ej4_2,TestLabel "test_ej4_3" test_ej4_3,TestLabel "test_ej4_4" test_ej4_4]
-               
+tests_ej4 = TestList [TestLabel "test_ej4_1" test_ej4_1,TestLabel "test_ej4_2" test_ej4_2,TestLabel "test_ej4_3" test_ej4_3,TestLabel "test_ej4_4" test_ej4_4,
+                      TestLabel "test_ej4_5" test_ej4_5, TestLabel "test_ej4_6" test_ej4_6]
+
+--TODO
+--Que hacer si la cadena que le pasan es vacia ("")
 repeticionesPromedio :: Extractor
 --repeticionesPromedio xs = (fromIntegral $ length $ split ' ' xs) / (fromIntegral $ length $ elementosSinRepetir $ split ' ' xs)
 repeticionesPromedio xs = let palabras = split ' ' xs in
@@ -115,6 +130,9 @@ test_ej5_4 = TestCase (assertEqual "(head frecuenciaTokens) \"abc\"" (0)
 
 tests_ej5 = TestList [TestLabel "test_ej5_1" test_ej5_1,TestLabel "test_ej5_2" test_ej5_2,TestLabel "test_ej5_3" test_ej5_3,TestLabel "test_ej5_4" test_ej5_4]
 
+
+--TODO
+--Que hacer si el texto es vacio?
 frecuenciaTokens :: [Extractor]
 frecuenciaTokens = map (\t -> (\x ->let longitud = length x in
                                      if longitud == 0 then
@@ -124,17 +142,110 @@ frecuenciaTokens = map (\t -> (\x ->let longitud = length x in
                                )
                        ) tokens
 
+--Tests ej6
+test_ej6_1 = TestCase (assertEqual "normalizarExtractor [\"lalala $$++$$ lalala lalala $$++$$\", \"  aa   x y aa \",\"aa aa\",\"aaa\"] repeticionesPromedio \"lalala $$++$$ lalala lalala $$++$$\""
+                                   (1)
+                                   (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "  aa   x y aa ","aa aa","aaa"] repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$"))
+                                   
+test_ej6_2 = TestCase (assertEqual "normalizarExtractor [\"lalala $$++$$ lalala lalala $$++$$\", \"  aa   x y aa \",\"aa aa\",\"aaa\"] repeticionesPromedio \"  aa   x y aa \""
+                                   (0.53333333333)
+                                   (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "  aa   x y aa ","aa aa","aaa"] repeticionesPromedio "  aa   x y aa "))
+                                   
+test_ej6_3 = TestCase (assertEqual "normalizarExtractor [\"lalala $$++$$ lalala lalala $$++$$\", \"  aa   x y aa \",\"aa aa\",\"aaa\"] repeticionesPromedio \"aa aa\""
+                                   (0.8)
+                                   (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "  aa   x y aa ","aa aa","aaa"] repeticionesPromedio "aa aa"))
+                                   
+test_ej6_4 = TestCase (assertEqual "normalizarExtractor [\"lalala $$++$$ lalala lalala $$++$$\", \"  aa   x y aa \",\"aa aa\",\"aaa\"] repeticionesPromedio \"aaa\""
+                                   (0.4)
+                                   (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "  aa   x y aa ","aa aa","aaa"] repeticionesPromedio "aaa"))
+                                   
+test_ej6_5 = TestCase (assertEqual "normalizarExtractor [\"abc\"] (head frecuenciaTokens) \"abc\""
+                                   (0)
+                                   (normalizarExtractor ["abc"] (head frecuenciaTokens) "abc"))
+
+tests_ej6 = TestList [TestLabel "test_ej6_1" test_ej6_1,TestLabel "test_ej6_2" test_ej6_2,TestLabel "test_ej6_3" test_ej6_3,TestLabel "test_ej6_4" test_ej6_4,
+                      TestLabel "test_ej6_5" test_ej6_5]
+
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
-normalizarExtractor textos extractor = (/maximoValor textos extractor).extractor
+normalizarExtractor textos extractor = let max = maximoValor textos extractor in
+                                         if max == 0 then extractor
+                                         else (/max).extractor
 
+--Tests ej7
+test_ej7_1 = TestCase (assertEqual "extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] [\"b=a\", \"a = 2; a = 4\", \"C:/DOS C:/DOS/RUN RUN/DOS/RUN\"]"
+                                   ([[0.33333334,0.6666667],[0.12962963,1.0],[1.0,0.6666667]])
+                                   (extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] ["b=a", "a = 2; a = 4", "C:/DOS C:/DOS/RUN RUN/DOS/RUN"]))
+
+test_ej7_2 = TestCase (assertEqual "extraerFeatures [repeticionesPromedio, longitudPromedioPalabras] [\"a = 2; a = 4\", \"C:/DOS C:/DOS/RUN RUN/DOS/RUN\"]"
+                                   ([[1.0,0.12962963],[0.6666667,1.0]])
+                                   (extraerFeatures [repeticionesPromedio, longitudPromedioPalabras] ["a = 2; a = 4", "C:/DOS C:/DOS/RUN RUN/DOS/RUN"]))
+test_ej7_3 = TestCase (assertEqual "extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] [\"a = 2; a = 4\"]"
+                                   ([[1.0, 1.0]])
+                                   (extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] ["a = 2; a = 4"]))
+test_ej7_4 = TestCase (assertEqual "extraerFeatures [repeticionesPromedio] [\"C:/DOS C:/DOS/RUN RUN/DOS/RUN\", \"b=a\", \"a = 2; a = 4\"]"
+                                   ([[0.6666667], [0.6666667],[1.0]])
+                                   (extraerFeatures [repeticionesPromedio] ["C:/DOS C:/DOS/RUN RUN/DOS/RUN", "b=a", "a = 2; a = 4"]))
+
+tests_ej7 = TestList [TestLabel "test_ej7_1" test_ej7_1,TestLabel "test_ej7_2" test_ej7_2,TestLabel "test_ej7_3" test_ej7_3,TestLabel "test_ej7_4" test_ej7_4]
+
+--TODO
+--Que hacer si la lista de extractores o de textos esta vacia?
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
-extraerFeatures extractores textos = foldr (\texto instancias -> (aplicarExtractores texto (normalizarExtractores textos extractores)):instancias) [] textos
+--extraerFeatures extractores textos = foldr (\texto instancias -> (aplicarExtractores texto (normalizarExtractores textos extractores)):instancias) [] textos
+--normaliza los extractores y luego por cada texto corre los extractores ya normalizados
+extraerFeatures extractores textos = let extractoresNormalizadodos = normalizarExtractores textos extractores in
+                                         map (\text -> map (\extractor -> extractor text) extractoresNormalizadodos
+                                             ) textos
 
+--Tests ej8-1
+test_ej8_1_1 = TestCase (assertEqual "distEuclideana [1.0,0.75,0.8125] [0.75,1.0,0.5]"
+                                   (0.47186464)
+                                   (distEuclideana [1.0,0.75,0.8125] [0.75,1.0,0.5]))
+
+test_ej8_1_2 = TestCase (assertEqual "distEuclideana [3.5] [8.3]"
+                                   (4.8)
+                                   (distEuclideana [3.5] [8.3]))
+test_ej8_1_3 = TestCase (assertEqual "distEuclideana [0] [2]"
+                                   (2)
+                                   (distEuclideana [0] [2]))
+test_ej8_1_4 = TestCase (assertEqual "distEuclideana [3.5] [0]"
+                                   (3.5)
+                                   (distEuclideana [3.5] [0]))
+test_ej8_1_5 = TestCase (assertEqual "distEuclideana [0] [0]"
+                                   (0)
+                                   (distEuclideana [0] [0]))
+test_ej8_1_6 = TestCase (assertEqual "distEuclideana [2.5,4] [2.5, 2]"
+                                   (2)
+                                   (distEuclideana [2.5,4] [2.5, 2]))
+test_ej8_1_7 = TestCase (assertEqual "distEuclideana [2.5, 4, 3] [2.5, 2, 7.5]"
+                                   (4.9244289)
+                                   (distEuclideana [2.5, 4, 3] [2.5, 2, 7.5]))
+
+tests_ej8_1 = TestList [TestLabel "test_ej8_1_1" test_ej8_1_1,TestLabel "test_ej8_1_2" test_ej8_1_2,TestLabel "test_ej8_1_3" test_ej8_1_3,TestLabel "test_ej8_1_4" test_ej8_1_4,
+                      TestLabel "test_ej8_1_5" test_ej8_1_5, TestLabel "test_ej8_1_6" test_ej8_1_6, TestLabel "test_ej8_1_7" test_ej8_1_7]
+                                             
 distEuclideana :: Medida
-distEuclideana = (\p q -> sqrt (sum (zipWith (\pv qv -> (pv-qv)*(pv-qv)) p q)))
+distEuclideana = (\p q -> sqrt $ sum $ zipWith (\pv qv -> (pv-qv)*(pv-qv)) p q)
+
+--Tests ej8-2
+test_ej8_2_1 = TestCase (assertEqual "distCoseno [0,3,4] [0,-3,-4]"
+                                   (-1.0)
+                                   (distCoseno [0,3,4] [0,-3,-4]))
+
+test_ej8_2_2 = TestCase (assertEqual "distCoseno [3.5] [8.3]"
+                                   (1)
+                                   (distCoseno [3.5] [8.3]))
+test_ej8_2_3 = TestCase (assertEqual "distCoseno [2.4, 2] [2, 2.4]"
+                                   (0.983606557)
+                                   (distCoseno [2.4, 2] [2, 2.4]))
+test_ej8_2_4 = TestCase (assertEqual "distCoseno [3.5, 2] [-1, 3]"
+                                   (0.1961161351)
+                                   (distCoseno [3.5, 2] [-1, 3]))
+
+tests_ej8_2 = TestList [TestLabel "test_ej8_2_1" test_ej8_2_1,TestLabel "test_ej8_2_2" test_ej8_2_2,TestLabel "test_ej8_2_3" test_ej8_2_3,TestLabel "test_ej8_2_4" test_ej8_2_4]
 
 distCoseno :: Medida
-distCoseno = (\p q -> (sumProductoEscalar p q) / ((sqrt (sumProductoEscalar p p))*(sqrt (sumProductoEscalar p p))) )
+distCoseno = (\p q -> (sumProductoEscalar p q) / ((sqrt (sumProductoEscalar p p))*(sqrt (sumProductoEscalar q q))) )
 
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
 knn k datos etiquetas norma = (\valor -> snd (mejor (cuentas (kMenores k datos etiquetas norma valor))))
@@ -188,13 +299,14 @@ maximoValor :: [Texto] -> Extractor -> Feature
 maximoValor textos extractor = abs $ maximoAbsoluto $ ejecutarExtractor textos extractor
 
 maximoAbsoluto :: [Feature] -> Feature
-maximoAbsoluto = foldr (\x buscarMax -> if abs x >= abs buscarMax then abs x else abs buscarMax) 0
+--maximoAbsoluto = foldr (\x buscarMax -> if abs x >= abs buscarMax then abs x else abs buscarMax) 0
+maximoAbsoluto = maximum.(map abs)
 
 ejecutarExtractor:: [Texto] -> Extractor -> [Feature]
 ejecutarExtractor textos extractor = map extractor textos
 
-aplicarExtractores :: Texto -> [Extractor] -> Instancia
-aplicarExtractores texto extractores = map (\extractor -> extractor texto) extractores
+--aplicarExtractores :: Texto -> [Extractor] -> Instancia
+--aplicarExtractores texto extractores = map (\extractor -> extractor texto) extractores
 
 normalizarExtractores :: [Texto] -> [Extractor] -> [Extractor]
 normalizarExtractores textos extractores = map (\ext -> normalizarExtractor textos ext) extractores 
