@@ -38,8 +38,6 @@ tests_ej1 = TestList [TestLabel "test_ej1_1" test_ej1_1,TestLabel "test_ej1_2" t
                       TestLabel "test_ej1_5" test_ej1_5,TestLabel "test_ej1_6" test_ej1_6,TestLabel "test_ej1_7" test_ej1_7,TestLabel "test_ej1_8" test_ej1_8,
                       TestLabel "test_ej1_9" test_ej1_9,TestLabel "test_ej1_10" test_ej1_10, TestLabel "test_ej1_11" test_ej1_11,TestLabel "test_ej1_12" test_ej1_12]
 
---TODO
---El separador es siempre un char o puede ser otra cosa?
 split :: Eq a => a -> [a] -> [[a]]
 split a = filter (not.null) . (foldr (\x (z:zs) -> if (x==a) then
                                                      if(null z) then
@@ -58,19 +56,12 @@ test_ej2_2 = TestCase (assertEqual "longitudPromedioPalabras \"  12345    12  \"
                                    (longitudPromedioPalabras "  12345    12  "))
 test_ej2_3 = TestCase (assertEqual "longitudPromedioPalabras \"Este\"" (4)
                                    (longitudPromedioPalabras "Este"))
---TODO ¿Que hacer cuando pido longitudPromedioPalabras de una cadena vacia?
---test_ej2_4 = TestCase (assertEqual "longitudPromedioPalabras \"\"" (0)
---                                   (longitudPromedioPalabras ""))
 
-tests_ej2 = TestList [TestLabel "test_ej2_1" test_ej2_1,TestLabel "test_ej2_2" test_ej2_2,TestLabel "test_ej2_3" test_ej2_3
-                      --,TestLabel "test_ej2_4" test_ej2_4
-                      ]
+tests_ej2 = TestList [TestLabel "test_ej2_1" test_ej2_1,TestLabel "test_ej2_2" test_ej2_2,TestLabel "test_ej2_3" test_ej2_3]
 
 longitudPromedioPalabras :: Extractor
 longitudPromedioPalabras xs = mean $ map genericLength palabras
                                where palabras = split ' ' xs
---longitudPromedioPalabras xs = sumaLongitudes(split ' ' xs) / (genericLength (split ' ' xs))
---sumaLongitudes = foldr (\x sumador -> genericLength x + sumador) 0
 
 --Tests ej3
 test_ej3_1 = TestCase (assertEqual "cuentas [\"x\", \"x\", \"y\", \"x\", \"z\"]" [(3,"x"),(1,"y"),(1,"z")]
@@ -86,14 +77,9 @@ tests_ej3 = TestList [TestLabel "test_ej3_1" test_ej3_1,TestLabel "test_ej3_2" t
 
 
 cuentas :: Eq a => [a] -> [(Int, a)]
---cuentas xs = cantidadDeApariciones (elementosSinRepetir xs) xs
 cuentas xs = let sinRepetidos = reverse $ elementosSinRepetir $ reverse xs in
                map (\x -> ((repeticiones x xs), x)) sinRepetidos
 
-               
---TODO
---Preguntar que tiene que hacer el ejercicio 4
---Nosotros lo que hicimos fue dividir la cantidad total de palabras por la cantidad de palabras distintas. Esta bien eso?
 --Tests ej4
 test_ej4_1 = TestCase (assertEqual "repeticionesPromedio \"lalala $$++$$ lalala lalala $$++$$\"]" (2.5)
                                    (repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$"))
@@ -103,19 +89,10 @@ test_ej4_3 = TestCase (assertEqual "repeticionesPromedio \"aa aa\"]" (2)
                                    (repeticionesPromedio "aa aa"))
 test_ej4_4 = TestCase (assertEqual "repeticionesPromedio \"aaa\"]" (1)
                                    (repeticionesPromedio "aaa"))
---test_ej4_5 = TestCase (assertEqual "repeticionesPromedio \"   \"]" (0)
---                                   (repeticionesPromedio "   "))
---test_ej4_6 = TestCase (assertEqual "repeticionesPromedio \"\"]" (0)
---                                   (repeticionesPromedio ""))
 
-tests_ej4 = TestList [TestLabel "test_ej4_1" test_ej4_1,TestLabel "test_ej4_2" test_ej4_2,TestLabel "test_ej4_3" test_ej4_3,TestLabel "test_ej4_4" test_ej4_4
-                      --,TestLabel "test_ej4_5" test_ej4_5, TestLabel "test_ej4_6" test_ej4_6
-                     ]
+tests_ej4 = TestList [TestLabel "test_ej4_1" test_ej4_1,TestLabel "test_ej4_2" test_ej4_2,TestLabel "test_ej4_3" test_ej4_3,TestLabel "test_ej4_4" test_ej4_4]
 
---TODO
---Que hacer si la cadena que le pasan es vacia ("")
 repeticionesPromedio :: Extractor
---repeticionesPromedio xs = (fromIntegral $ length $ split ' ' xs) / (fromIntegral $ length $ elementosSinRepetir $ split ' ' xs)
 repeticionesPromedio xs = let palabras = split ' ' xs in
                             (fromIntegral $ length palabras) / (fromIntegral $ length $ elementosSinRepetir palabras)
 
@@ -125,8 +102,6 @@ tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789
 --Tests ej5
 test_ej5_1 = TestCase (assertEqual "(head frecuenciaTokens) \"use_snake_case !\"" (0.125)
                                    ((head frecuenciaTokens) "use_snake_case !"))
---TODO
---Que hacer si la cadena que le pasan es vacia ("")
 test_ej5_2 = TestCase (assertEqual "(head frecuenciaTokens) \"\"" (0)
                                    ((head frecuenciaTokens) ""))
 test_ej5_3 = TestCase (assertEqual "(head $ tail frecuenciaTokens) \",a,\"" (0.66666666)
@@ -136,9 +111,6 @@ test_ej5_4 = TestCase (assertEqual "(head frecuenciaTokens) \"abc\"" (0)
 
 tests_ej5 = TestList [TestLabel "test_ej5_1" test_ej5_1,TestLabel "test_ej5_2" test_ej5_2,TestLabel "test_ej5_3" test_ej5_3,TestLabel "test_ej5_4" test_ej5_4]
 
-
---TODO
---Que hacer si el texto es vacio?
 frecuenciaTokens :: [Extractor]
 frecuenciaTokens = map (\t -> (\x ->let longitud = length x in
                                      if longitud == 0 then
@@ -194,11 +166,7 @@ test_ej7_4 = TestCase (assertEqual "extraerFeatures [repeticionesPromedio] [\"C:
 
 tests_ej7 = TestList [TestLabel "test_ej7_1" test_ej7_1,TestLabel "test_ej7_2" test_ej7_2,TestLabel "test_ej7_3" test_ej7_3,TestLabel "test_ej7_4" test_ej7_4]
 
---TODO
---Que hacer si la lista de extractores o de textos esta vacia?
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
---extraerFeatures extractores textos = foldr (\texto instancias -> (aplicarExtractores texto (normalizarExtractores textos extractores)):instancias) [] textos
---normaliza los extractores y luego por cada texto corre los extractores ya normalizados
 extraerFeatures extractores textos = let extractoresNormalizadodos = normalizarExtractores textos extractores in
                                          map (\text -> map (\extractor -> extractor text) extractoresNormalizadodos
                                              ) textos
@@ -282,11 +250,7 @@ test_ej9_6 = TestCase (assertEqual "(knn 3 [[1,0.2,0.4],[0.8, 0.21, 0],[0.2, 1.0
 
 tests_ej9 = TestList [TestLabel "test_ej9_1" test_ej9_1,TestLabel "test_ej9_2" test_ej9_2,TestLabel "test_ej9_3" test_ej9_3,TestLabel "test_ej9_4" test_ej9_4,
                       TestLabel "test_ej9_5" test_ej9_5, TestLabel "test_ej9_6" test_ej9_6]
---TODO
---Se puede asumir que la longitud de lista de instancias (datos) es igual a la de las etiquetas
---Está bien que para la parte de la moda estadistica contamos cuantas veces se repite cada elemento y nos quedamos con el que más se repite?
---Que pasa si estas listas son vacias?
---Se puede asumir que k es mayor a 0
+
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
 knn k datos etiquetas distancia = (\valor -> snd (mejor (cuentas (kMenores k datos etiquetas distancia valor))))
 
@@ -314,13 +278,7 @@ test_ej10_5 = TestCase (assertEqual "separarDatos [[1,1],[2,2],[3,3],[4,4],[5,5]
 tests_ej10 = TestList [TestLabel "test_ej10_1" test_ej10_1,TestLabel "test_ej10_2" test_ej10_2,TestLabel "test_ej10_3" test_ej10_3,TestLabel "test_ej10_4" test_ej10_4,
                       TestLabel "test_ej10_5" test_ej10_5]
 
---TODO
---Podemos asumir que el n no es mayor a la cantidad de elementos?
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
---separarDatos datos etiquetas n p = (fst(unzip(dameTrain (take ((calcularTamano datos n) * n) (zip datos etiquetas)) p (calcularTamano datos n))),
---                        fst (unzip(dameVal (take ((calcularTamano datos n) * n) (zip datos etiquetas)) p (calcularTamano datos n))), 
---                        snd(unzip(dameTrain (take ((calcularTamano datos n) * n) (zip datos etiquetas)) p (calcularTamano datos n))),
---                        snd (unzip(dameVal (take ((calcularTamano datos n) * n) (zip datos etiquetas))  p (calcularTamano datos n))))
 separarDatos datos etiquetas n p = let tamanoParticion = (length datos) `quot` n in
                                      let particion = take (tamanoParticion*n) (zip datos etiquetas) in
                                        let primerosElementos = tamanoParticion * (p-1) in
@@ -359,15 +317,9 @@ test_ej11_6 = TestCase (assertEqual "accuracy [\"i\",\"i\",\"i\",\"i\"] [\"f\",\
 tests_ej11 = TestList [TestLabel "test_ej11_1" test_ej11_1,TestLabel "test_ej11_2" test_ej11_2,TestLabel "test_ej11_3" test_ej11_3,TestLabel "test_ej11_4" test_ej11_4,
                       TestLabel "test_ej11_5" test_ej11_5,TestLabel "test_ej11_6" test_ej11_6]
 
---TODO
---Que hacer si me pasan listas vacias?
 accuracy :: [Etiqueta] -> [Etiqueta] -> Float
 accuracy xs ys = realToFrac (contarIguales $ zip xs ys) / (genericLength xs)
                   where contarIguales = foldr(\x acum -> if(fst(x) == snd(x)) then acum+1 else acum) 0 
-
-
---accuracies::Datos -> [Etiqueta]->Int -> [Feature]
---accuracies datos etiquetas n = map(\particionDeValidacion -> accuracy (cuarto $ separarDatos datos etiquetas n particionDeValidacion) (etiquetasObtenidas datos etiquetas n particionDeValidacion (segundo $ separarDatos datos etiquetas n particionDeValidacion))) [1..n]
 
 --Tests ej12
 test_ej12_1 = TestCase (assertEqual "nFoldCrossValidation 4 [[1,1],[2,2],[3,3],[4,4]] [\"i\",\"f\",\"f\",\"i\"]"
@@ -378,35 +330,16 @@ test_ej12_2 = TestCase (assertEqual "nFoldCrossValidation 2 [[1,1],[2,2],[3,3],[
                                    (0.75)
                                    (nFoldCrossValidation 2 [[1,1],[2,2],[3,3],[4,4]] ["f","f","f","i"]))
                                    
---test_ej12_3 = TestCase (assertEqual "nFoldCrossValidation 1 [[1,1],[2,2],[3,3],[4,4]] [\"f\",\"f\",\"f\",\"i\"]"
---                                   (0.75)
---                                   (nFoldCrossValidation 1 [[1,1],[2,2],[3,3],[4,4]] ["f","f","f","i"]))
-                                   
-test_ej12_4 = TestCase (assertEqual "nFoldCrossValidation 2 [[1,1],[2,2],[3,3],[4,4],[5,5]] [\"f\",\"f\",\"f\",\"i\",\"f\"]"
+test_ej12_3 = TestCase (assertEqual "nFoldCrossValidation 2 [[1,1],[2,2],[3,3],[4,4],[5,5]] [\"f\",\"f\",\"f\",\"i\",\"f\"]"
                                    (0.75)
                                    (nFoldCrossValidation 2 [[1,1],[2,2],[3,3],[4,4],[5,5]] ["f","f","f","i","f"]))
 
-tests_ej12 = TestList [TestLabel "test_ej12_1" test_ej12_1,TestLabel "test_ej12_2" test_ej12_2,
-                      --TestLabel "test_ej12_3" test_ej12_3,
-                      TestLabel "test_ej12_4" test_ej12_4]
---TODO
---Si la división de los datos por n lo es exacta se descartan los casos sobrantes (como en el ej10).
---Pero al hacer esto si tengo 4 elementos y los divido en 3 particiones se descarta el cuarto, por lo cual nunca se usa esa particion como dato de entrenamiento
---y tampoco como dato de validacion. Está bien eso?
+tests_ej12 = TestList [TestLabel "test_ej12_1" test_ej12_1,TestLabel "test_ej12_2" test_ej12_2, TestLabel "test_ej12_3" test_ej12_3]
 
---Si las particiones tienen más de un elemento, por ejemplo si los elementos son [[1],[2],[3],[4]] y cada particion tiene 2 elementos nosotros los que hacemos
---es calcular el (knn 15 [[3],[4]] etiquetas de 3 y 4 distEuclideana) [1], luego (knn 15 [[3],[4]] etiquetas de 3 y 4 distEuclideana) [2] y calculamos el
---accuracy de estas dos etiquetas obtenidas con las 2 originales de [1] y [2]. Luego los mismo pero usando [[1],[2]] como entrenamiento y [3] y luego [4] como validacion.
---Por ultimo calculamos el accuracy entre estas dos accuracies obtenidas
---Esta bien esto?
-
---Que pasa si n = 1, ya que estaria llamando a knn con listas vacias?
---Que pasa si se pasa una lista con un elemento, ya que las de entrenamiento o la de validacion quedaría una lista vacia?
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
 nFoldCrossValidation n datos etiquetas = mean accuracies
     where accuracyPorParticion particionDeValidacion = let (x_train, x_val, y_train, y_val) = separarDatos datos etiquetas n particionDeValidacion in
                                                         let modeloK15 = (knn 15 (x_train) (y_train) distEuclideana) in
-                                                          --let etiquetasObtenidas = foldr(\instancia acum -> (modeloK15 instancia):acum) [] in
                                                           let etiquetasObtenidas = map modeloK15 in
                                                             accuracy (y_val) (etiquetasObtenidas (x_val))
           accuracies = [accuracyPorParticion x | x<-[1..n]]
@@ -414,55 +347,29 @@ nFoldCrossValidation n datos etiquetas = mean accuracies
 tests = TestList [TestLabel "tests_ej1" tests_ej1, TestLabel "tests_ej2" tests_ej2, TestLabel "tests_ej3" tests_ej3, TestLabel "tests_ej4" tests_ej4,
                   TestLabel "tests_ej5" tests_ej5, TestLabel "tests_ej6" tests_ej6, TestLabel "tests_ej7" tests_ej7, TestLabel "tests_ej8" tests_ej8,
                   TestLabel "tests_ej9" tests_ej9, TestLabel "tests_ej10" tests_ej10, TestLabel "tests_ej11" tests_ej11, TestLabel "tests_ej12" tests_ej12]
-          
---etiquetasObtenidas::Datos -> [Etiqueta]->Int->Int->[Instancia]->[Etiqueta]
---etiquetasObtenidas datos etiquetas n particionDeValidacion instancias = foldr(\instancia acum -> (modeloK15 datos etiquetas n particionDeValidacion instancia):acum) [] instancias
-
---modeloK15::Datos -> [Etiqueta]->Int->Int->Modelo
---modeloK15 datos etiquetas n particionDeValidacion = (knn 15 (primero $ separarDatos datos etiquetas n particionDeValidacion) (tercero $ separarDatos datos etiquetas n particionDeValidacion) distEuclideana)
 
 -- *************** Funciones auxiliares ********************
-
---cantidadDeApariciones::Eq a => [a]->([a]->[(Int,a)])
---cantidadDeApariciones = foldr (\x contar -> (\ys->((repeticiones x ys),x):contar ys)) (\ys->[])
 
 repeticiones::Eq a =>a->[a]->Int
 repeticiones x = foldr (\y contar -> if x==y then 1 + contar else contar) 0
 
---elementosSinRepetir :: Eq a => [a] -> [a]
---elementosSinRepetir xs = (foldr(\x recu->(\ys -> if repeticiones x (tail ys) == 0 then x:recu (tail ys) else recu (tail ys))) (\ys->[]) xs) xs
 elementosSinRepetir :: Eq a => [a] -> [a]
 elementosSinRepetir = foldr (\x recu -> if x `elem` recu then recu else x:recu) []
-
---esta :: Eq a => a -> [a] -> Bool
---esta x xs = foldr (\y  recu -> y == x || recu) False xs
-
---apariciones :: Eq a => a -> [a] -> Int
---apariciones a = foldr (\x xs -> if x==a then (1+xs) else xs) 0
 
 maximoValor :: [Texto] -> Extractor -> Feature
 maximoValor textos extractor = abs $ maximoAbsoluto $ ejecutarExtractor textos extractor
 
 maximoAbsoluto :: [Feature] -> Feature
---maximoAbsoluto = foldr (\x buscarMax -> if abs x >= abs buscarMax then abs x else abs buscarMax) 0
 maximoAbsoluto = maximum.(map abs)
 
 ejecutarExtractor:: [Texto] -> Extractor -> [Feature]
 ejecutarExtractor textos extractor = map extractor textos
 
---aplicarExtractores :: Texto -> [Extractor] -> Instancia
---aplicarExtractores texto extractores = map (\extractor -> extractor texto) extractores
-
 normalizarExtractores :: [Texto] -> [Extractor] -> [Extractor]
 normalizarExtractores textos extractores = map (\ext -> normalizarExtractor textos ext) extractores 
 
--- Para ejercicio 8
-
 sumProductoEscalar :: Instancia -> Instancia -> Feature
 sumProductoEscalar p q = sum (zipWith (*) p q)
-
-
--- Para ejercicio 9
 
 kMenores :: Int -> Datos -> [Etiqueta] -> Medida -> Instancia -> [(Instancia,Etiqueta)]
 kMenores k datos etiquetas distancia valor = take k $ sortBy 
@@ -470,34 +377,3 @@ kMenores k datos etiquetas distancia valor = take k $ sortBy
 
 mejor :: [(Int,a)] -> a
 mejor xs = snd (maximumBy (\a b -> if (fst a)<(fst b) then LT else GT) xs)
-
--- Para ejercicio 10
-
---contarIguales ::Eq a =>  [(a,a)] -> Int
---contarIguales = foldr(\x acum -> if(fst(x) == snd(x)) then acum+1 else acum) 0 
-
--- Para ejercicio 11
-
---dameTrain:: [(Instancia,Etiqueta)] -> Int -> Int -> [(Instancia,Etiqueta)]
---dameTrain xs p tamano = (take (tamano * (p-1)) xs) ++ (drop (p*tamano) xs )
-
---dameVal:: [(Instancia,Etiqueta)] -> Int -> Int -> [(Instancia,Etiqueta)]
---dameVal xs p tamano = take tamano (drop ((p-1)*tamano) xs)
-
---calcularTamano:: [a] -> Int -> Int
---calcularTamano xs n = (length xs) `quot` n
-
--- Para ejercicio 12
-
-
-primero :: (a,b,c,d) -> a
-primero (x,y,z,w) = x
-
-segundo :: (a,b,c,d) -> b
-segundo (x,y,z,w) = y
-
-tercero :: (a,b,c,d) -> c
-tercero (x,y,z,w) = z
-
-cuarto :: (a,b,c,d) -> d
-cuarto (x,y,z,w) = w
