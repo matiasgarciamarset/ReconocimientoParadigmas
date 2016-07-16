@@ -80,7 +80,7 @@ distCoseno = (\p q -> (sumProductoEscalar p q) / ((sqrt (sumProductoEscalar p p)
 
 --ej9
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
-knn k datos etiquetas distancia = (\valor -> snd (mejor (cuentas (kMenores k datos etiquetas distancia valor))))
+knn k datos etiquetas distancia = (\valor -> mejor $ cuentas $ map (\(x, y)->y) (kMenores k datos etiquetas distancia valor))
 
 --ej10
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])

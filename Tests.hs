@@ -238,7 +238,7 @@ tests_ej11 = TestList [TestLabel "test_ej11_1" test_ej11_1,TestLabel "test_ej11_
 
 --Tests ej12
 test_ej12_1 = TestCase (assertEqual "nFoldCrossValidation 4 [[1,1],[2,2],[3,3],[4,4]] [\"i\",\"f\",\"f\",\"i\"]"
-                                   (0.25)
+                                   (0.0)
                                    (nFoldCrossValidation 4 [[1,1],[2,2],[3,3],[4,4]] ["i","f","f","i"]))
                                    
 test_ej12_2 = TestCase (assertEqual "nFoldCrossValidation 2 [[1,1],[2,2],[3,3],[4,4]] [\"f\",\"f\",\"f\",\"i\"]"
